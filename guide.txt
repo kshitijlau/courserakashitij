@@ -1,0 +1,232 @@
+📘 Detailed Feature Specification Document
+Application: AI-Assisted Interviewer Platform  Deployment: Replit (full-stack)
+
+👥 User Roles & Access
+
+
+🔧 1. Admin Role – Feature Breakdown
+🔹1.1 Role & Skill Management
+Create/edit/delete job roles (e.g., Frontend Engineer, Sales Manager). 
+For each role: 
+Define required skills (e.g., JavaScript, Communication). 
+Assign competency levels: Beginner / Intermediate / Advanced. 
+🔹1.2 Question Bank
+AI-generated questions: 
+Use GPT-4 to generate questions for a selected role + skill + competency level. 
+Example: "Generate 5 intermediate-level React questions for a Frontend Engineer." 
+Manual upload: 
+Admins can upload questions manually via form or CSV. 
+Each question is tagged with: 
+Role 
+Skill 
+Competency 
+Type (Behavioral, Technical, Situational) 
+View/edit/delete/search questions. 
+🔹1.3 Interview Configuration
+Define interview templates per role: 
+Number of questions 
+Duration per question 
+Skills to assess 
+Assign interviews to interviewers. 
+
+🎤 2. Interviewer Role – Feature Breakdown
+🔹2.1 Dashboard
+See list of assigned interviews. 
+View interviewee details: name, role applied for, resume link (optional). 
+Status filters: Pending, Completed, Decisioned. 
+🔹2.2 Live Interview Interface
+Embedded video window (Daily.co / LiveKit). 
+AI-suggested questions: 
+Based on interview template, role, and skills. 
+Questions displayed one at a time with option to: 
+Mark as “Asked” 
+Skip / Replace 
+Rate answer (during or after) 
+Note-taking panel: Add notes while asking questions. 
+🔹2.3 Post-Interview Dashboard
+Transcript auto-generated using Whisper from the recorded video/audio. 
+AI scoring per skill: 
+Language use, clarity, relevance, confidence. 
+Manual scoring: 
+Interviewer scores each skill on 1–5 scale. 
+Adds final recommendation: Hire / Hold / Reject 
+AI vs Manual score comparison chart 
+Final decision + comment box 
+
+👤 3. Interviewee Role – Feature Breakdown
+🔹3.1 Join Interview
+Click invite link / button from dashboard. 
+Accept terms (video will be recorded). 
+Join video call with interviewer. 
+UI: Clean fullscreen video + name label. 
+🔹3.2 Post-Interview Feedback
+Rate interviewer on: 
+Clarity of questions 
+Friendliness 
+Time management 
+Add optional free-text feedback. 
+
+🧠 AI Features – Platform-Wide
+🔹4.1 AI Question Generation (Admin)
+Uses OpenAI’s GPT-4 via prompt:    “Generate 5 [skill-level] interview questions for the skill [skill] for a [job role]”  
+Output questions are stored with role/skill tags. 
+🔹4.2 AI Question Prompting (Interviewer)
+During interview, AI selects the next most relevant question. 
+Dynamic suggestions based on: 
+Questions already asked 
+Skill coverage remaining 
+🔹4.3 Interview Scoring AI (Post-interview)
+Use Whisper to generate a transcript. 
+Send transcript + skill expectations to GPT-4. 
+GPT returns a score (1–5) per skill with justification. 
+
+📊 Reporting & Logging
+
+
+
+
+🧠 AI-Assisted Interviewer Application – Full Replit Build Guide
+Overview
+This document provides a complete specification and setup guide to build a scalable, AI-enhanced interviewer platform using Replit. The application supports three user roles — Admin, Interviewer, and Interviewee — and leverages modern tools such as React, FastAPI, PostgreSQL, OpenAI (GPT-4 + Whisper), and Daily.co.
+
+🎯 Goal
+Build a real-time, AI-assisted interview system where:
+Admins define job roles, skills, and questions. 
+Interviewers conduct video interviews with AI-assisted questions and scoring. 
+Candidates (Interviewees) participate in interviews and provide feedback. 
+
+🧱 Tech Stack
+
+
+👥 User Roles & Capabilities
+1. Admin
+Create/edit job roles. 
+Define skills and competency levels per role. 
+Generate AI-based questions using GPT-4. 
+Upload manual questions via UI or CSV. 
+Manage interview templates per role. 
+View question logs and interview analytics. 
+2. Interviewer
+See assigned interviews. 
+View candidate profiles. 
+Start video interview with AI-suggested questions. 
+Take notes during interview. 
+Post-interview: View transcript, compare AI vs manual scores. 
+Finalize hiring decision. 
+3. Interviewee
+Join video interviews. 
+Post-interview: Rate the interviewer. 
+
+🧠 AI Capabilities
+AI Question Generation (Admin): GPT-4 generates questions based on job role, skill, and competency. 
+Live Question Prompting (Interviewer): AI dynamically suggests questions during the interview. 
+AI Scoring Engine: Uses Whisper transcript + GPT-4 to score candidate answers. 
+
+🗄️ Suggested Database Schema
+Users(id, name, email, role, password_hash)
+Roles(id, title)
+Skills(id, name, role_id, competency_level)
+Questions(id, content, skill_id, role_id, source, type)
+Interviews(id, interviewer_id, interviewee_id, role_id, date, status)
+InterviewQuestions(id, interview_id, question_id, asked, notes)
+Responses(id, interview_id, skill_id, ai_score, manual_score, comments)
+Feedback(id, interview_id, rating, comments)
+
+
+📁 Project Structure
+/ai-interview-app
+│
+├── frontend/              # React frontend
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── App.tsx
+│   └── package.json
+│
+├── backend/               # FastAPI backend
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── api/
+│   │   ├── models/
+│   │   └── services/
+│   └── requirements.txt
+│
+├── .replit                # Combined run script
+├── replit.nix             # Dependencies for both Node.js and Python
+├── .env                   # API keys and configs
+└── README.md
+
+
+🧪 Core Features by Role
+🔐 Authentication
+Use Firebase/Auth0 or custom login. 
+Store role in session and restrict access to role-specific views. 
+🧩 Admin Dashboard
+CRUD interface for job roles and skills. 
+Form to trigger AI-based question generation. 
+Question upload form + CSV parser. 
+Interview template creation. 
+🎥 Interviewer Flow
+Assigned interviews list view. 
+Join interview (Daily.co embedded). 
+Real-time AI question prompts. 
+Note-taking during live call. 
+Post-interview dashboard: 
+Transcript (Whisper) 
+AI skill scoring 
+Manual skill scoring 
+AI vs Manual comparison chart 
+Final decision (Hire / Reject / Hold) 
+👤 Interviewee Flow
+Join video call with pre-filled role info. 
+Provide feedback post-call (rating + comments). 
+
+📦 API Integration
+🔹 OpenAI GPT-4 – Question Generation
+def generate_questions(role, skills):
+    prompt = f"Generate 5 interview questions for the role {role} covering skills {', '.join(skills)}."
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message["content"]
+
+🔹 Whisper – Transcript
+Use openai.Audio.transcribe() 
+Upload video/audio post-interview 
+
+🔧 Replit Setup Guide
+Step 1: Create Replit Project
+Create new Replit (Python + Nix) 
+Enable Webview and Shell 
+Step 2: Backend Setup (FastAPI)
+pip install fastapi uvicorn openai python-multipart sqlalchemy psycopg2-binary
+
+Create backend/app/main.py and set up basic FastAPI app with CORS.
+Step 3: Frontend Setup (React)
+npx create-react-app frontend --template typescript
+cd frontend
+npm install axios react-router-dom tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+Update Tailwind config and styles.
+Step 4: Run Everything Together
+.replit file:
+run = "uvicorn backend.app.main:app --host=0.0.0.0 --port=8000 & cd frontend && npm start"
+
+Step 5: Environment Variables
+Create .env in project root:
+OPENAI_API_KEY=sk-xxx
+DATABASE_URL=postgresql://...
+DAILY_API_KEY=...
+
+Use Replit Secrets to securely store them.
+
+🧰 Optional Enhancements
+Export interview report as PDF 
+Add question tagging (e.g., Behavioral, Technical) 
+Add notification system for scheduled interviews 
+Add analytics for Admin (avg scores, skill heatmaps) 
+
+✅ Ready to Build
+This doc is now ready to be dropped into Cursor or Replit to scaffold the application end-to-end.  Would you like a GitHub version or PDF export next?
